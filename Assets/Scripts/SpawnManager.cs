@@ -3,11 +3,10 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     public Transform spawnPoint;
-    public GameObject obstaclePrefab;
 
     void Start()
     {
-        InvokeRepeating(nameof(Spawn), 0, 2f);
+        InvokeRepeating(nameof(Spawn), 2f, 2f);
     }
 
     void Spawn()
@@ -19,11 +18,12 @@ public class SpawnManager : MonoBehaviour
         {
             return;
         }
+        int random = Random.Range(0, 3);
+        var obstacle = ObstacleObjectPool.Instance.Acquire(random);
+        obstacle.transform.SetPositionAndRotation(spawnPoint.transform.position, transform.rotation);
 
-        Instantiate(
-            obstaclePrefab,
-            spawnPoint.position,
-            obstaclePrefab.transform.rotation
-        );
+        var moveLeft = obstacle.GetComponent<MoveLeft>();
+        moveLeft.obstacle = obstacle;
+        moveLeft.obstacleType = random;
     }
 }
